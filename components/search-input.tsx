@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function SearchInput() {
 
@@ -10,17 +11,20 @@ export default function SearchInput() {
   const pathname = usePathname()
   const {replace} = useRouter()
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const params = new URLSearchParams;
-    const searchString = event.currentTarget.value;
-
-    if (searchString) {
-        params.set('search', searchString)
-    } else {
-      params.delete('search');
+  const handleChange = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    {
+      const params = new URLSearchParams;
+      const searchString = event.target.value;
+  
+      if (searchString) {
+          params.set('search', searchString)
+      } else {
+        params.delete('search');
+      }
+      replace(`${pathname}?${params.toString()}`)
     }
-    replace(`${pathname}?${params.toString()}`)
-  }
+  }, 500
+);
 
   return (
     <div className="relative">
