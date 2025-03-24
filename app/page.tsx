@@ -18,8 +18,6 @@ type ComponentProps = {
 }
 
 export default async function Component({searchParams}: ComponentProps) {
-  
-  
   //fetch dos dados
   const response = await axios.get('https://apis.codante.io/api/orders-api/orders', {
     params: {
@@ -31,6 +29,7 @@ export default async function Component({searchParams}: ComponentProps) {
   });
 
   const orders = response.data.data;
+  const lastPage = response.data.meta.last_page;
   let links: {url: string, label:string, active: boolean, id: number }[] = response.data.meta.links;
 
   links = links.map((link, index) => (
@@ -53,7 +52,7 @@ export default async function Component({searchParams}: ComponentProps) {
         <CardContent>
           <OrdersTable orders={orders} />
           <div className="mt-8">
-            <Pagination links={links}/>
+            <Pagination links={links} lastPage={lastPage}/>
           </div>
         </CardContent>
       </Card>

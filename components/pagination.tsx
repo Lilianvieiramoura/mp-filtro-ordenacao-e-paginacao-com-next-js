@@ -18,9 +18,10 @@ type PaginationTypes = {
     active: boolean;
     id: number;
   }[];
+  lastPage: number;
 }
 
-export default function Pagination({links}: PaginationTypes) {
+export default function Pagination({links, lastPage}: PaginationTypes) {
 
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -29,9 +30,13 @@ export default function Pagination({links}: PaginationTypes) {
   function handleClickPage(pageNumber: number) {
     const params = new URLSearchParams(searchParams);
     if (pageNumber > 1) {
-      params.set('page', pageNumber.toString());
+      if (pageNumber > lastPage) {
+        params.set('page', lastPage.toString())
+      } else {
+        params.set('page', pageNumber.toString());
+      }
     } else {
-      params.delete('page');
+      params.delete('page')
     }
     replace(`${pathname}?${params.toString()}`, {scroll: false})
   }
@@ -40,7 +45,7 @@ export default function Pagination({links}: PaginationTypes) {
     <PaginationComponent>
       <PaginationContent>
 
-        <PaginationItem>
+        <PaginationItem onClick={() => handleClickPage(Number(searchParams.get('page') || 1) - 1)} className={`${links[0].url ? 'cursor-pointer' : 'cursor-not-allowed text-slate-300'}`}>
           <PaginationPrevious />
         </PaginationItem>
 
@@ -68,7 +73,7 @@ export default function Pagination({links}: PaginationTypes) {
           )
         })}
 
-        <PaginationItem>
+        <PaginationItem className={`${links[links.length - 1].url ? 'cursor-pointer' : 'cursor-not-allowed text-slate-300'}`} onClick={() => handleClickPage(Number(searchParams.get('page') || 1) + 1)}>
           <PaginationNext />
         </PaginationItem>
       </PaginationContent>
