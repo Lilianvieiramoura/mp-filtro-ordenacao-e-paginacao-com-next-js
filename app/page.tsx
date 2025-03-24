@@ -13,10 +13,20 @@ import {
 
 import axios from 'axios';
 
-export default async function Component() {
-
+export default async function Component({
+  searchParams, 
+}: {
+  searchParams?: { search?: string}
+}) {
+  console.log(searchParams);
+  
+  
   //fetch dos dados
-  const response = await axios.get('https://apis.codante.io/api/orders-api/orders');
+  const response = await axios.get('https://apis.codante.io/api/orders-api/orders', {
+    params: {
+      search: searchParams?.search
+    }
+  });
   const orders = response.data.data;
   
   return (
